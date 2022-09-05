@@ -9,9 +9,9 @@ const char MAIN_page[] PROGMEM = R"=====(
     <style type="text/css">
     body {
         font-family: "微軟正黑體", "黑體-繁", sans-serif;
-    text-align: center;
-    background-color: #202020;
-    color: white; /* White text */
+        text-align: center;
+        background-color: #202020;
+        color: white; /* White text */
     }
   
   #status {
@@ -37,6 +37,7 @@ const char MAIN_page[] PROGMEM = R"=====(
   #btn-group button:hover {
     background-color: #B8860B;
   }
+
   
     </style>
   </head>
@@ -56,13 +57,13 @@ const char MAIN_page[] PROGMEM = R"=====(
   </div>
   
   <div id="ip">
-    <h3><span id="__IP__"></span></h3>   
+    <h3>__IP__</h3>   
   </div>  
   
     <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script>    
-    getIP();
+    
     
     $("#Button0").click(function(){postLevel("0");});
     $("#Button1").click(function(){postLevel("1");});
@@ -88,23 +89,61 @@ const char MAIN_page[] PROGMEM = R"=====(
       };
       xhttp.open("GET", "readLevel", true);
       xhttp.send();      
-    }
-
-    function getIP() {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("__IP__").innerHTML =
-          this.responseText;
-        }
-      };
-      xhttp.open("GET", "readIP", true);
-      xhttp.send();      
-    }
-    
-    
+    }     
     
     </script>
+
+
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+  <div id='version'>
+    <h3>現在版本 : __VERSION__</h3>   
+  </div>  
+  <form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>
+    <input type='file' name='update' accept=".bin" required>
+    <input type='submit' value='韌體更新'></input>
+  </form>
+  
+   <div id='prg' style='visibility:hidden'>progress: 0%</div>
+ 
+ <script>
+  $('form').submit(function(e){
+    document.getElementById("prg").style.visibility = "visible";
+    e.preventDefault();
+    var form = $('#upload_form')[0];
+    var data = new FormData(form);
+    $.ajax({
+      url: '/update',
+      type: 'POST',
+      data: data,
+      contentType: false,
+      processData:false,
+      xhr: function() {
+        var xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function(evt) {
+          if (evt.lengthComputable) {
+            var per = evt.loaded / evt.total;
+            $('#prg').html('progress: ' + Math.round(per*100) + '%');                   
+          }
+        }, false);
+        return xhr;
+      },
+      success:function(d, s) {
+        console.log('success!')
+      },
+      error: function (a, b, c) {
+      }
+    });
+    window.location.reload();
+  });
+ </script>
+
+
+
+
+
+
+
+    
   </body>
 </html>
 
