@@ -16,8 +16,8 @@
 #define RELAY_ON LOW
 #define RELAY_OFF HIGH
 
-const char* ssid = "ch_wifi";
-const char* password = "wifi_CH_1201";
+const char* ssid = "xxxxx";
+const char* password = "xxxxx";
 
 WebServer server(80);
 
